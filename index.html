@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <meta name="description" content="倉庫番 Sokoban 推箱子遊戲 — 繁體中文，數十個關卡，鍵盤操控。" />
+  <title>倉庫番 — 推箱子小遊戲</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main id="app">
+    <!-- 主選單 -->
+    <section id="menu-screen" class="screen active">
+      <header class="title-block">
+        <h1 class="title">📦 倉庫番</h1>
+        <p class="subtitle">推箱子小遊戲 · 動腦解謎</p>
+      </header>
+
+      <div class="menu-actions">
+        <button id="btn-continue" class="btn btn-primary big">繼續遊戲</button>
+        <button id="btn-levels" class="btn big">選擇關卡</button>
+        <button id="btn-howto" class="btn">玩法說明</button>
+      </div>
+
+      <footer class="foot">
+        <span>© <a href="https://github.com/ShinyChang/sokoban" target="_blank" rel="noopener">ShinyChang/sokoban</a></span>
+      </footer>
+    </section>
+
+    <!-- 玩法說明 -->
+    <section id="howto-screen" class="screen">
+      <header class="topbar">
+        <button class="btn back" data-back="menu">← 返回</button>
+        <h2>玩法說明</h2>
+        <span class="spacer"></span>
+      </header>
+      <div class="howto">
+        <p>把所有 <span class="legend box">📦</span> 箱子推到 <span class="legend target">🎯</span> 目標位置就過關！</p>
+        <ul class="rules">
+          <li>用鍵盤的 <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> 方向鍵移動</li>
+          <li>也可以用 <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> 移動</li>
+          <li>在手機上可以用螢幕下方的方向按鈕</li>
+          <li>按 <kbd>Z</kbd> 或「上一步」可以悔棋</li>
+          <li>按 <kbd>R</kbd> 或「重來」可以重置關卡</li>
+          <li>箱子只能<strong>推</strong>，不能拉！撞到牆或另一個箱子就推不動</li>
+        </ul>
+        <div class="legend-grid">
+          <div><span class="cell-demo wall"></span>牆壁</div>
+          <div><span class="cell-demo floor"></span>地板</div>
+          <div><span class="cell-demo target-demo">🎯</span>目標</div>
+          <div><span class="cell-demo box-demo">📦</span>箱子</div>
+          <div><span class="cell-demo box-on">✅</span>已就位</div>
+          <div><span class="cell-demo player-demo">🧑</span>玩家</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 關卡選擇 -->
+    <section id="levels-screen" class="screen">
+      <header class="topbar">
+        <button class="btn back" data-back="menu">← 返回</button>
+        <h2>選擇關卡</h2>
+        <button id="btn-reset-progress" class="btn danger small" title="清除所有進度">清除進度</button>
+      </header>
+      <div class="difficulty-legend">
+        <span>難度：</span>
+        <span class="diff-badge easy">簡單</span>
+        <span class="diff-badge medium">中等</span>
+        <span class="diff-badge hard">困難</span>
+        <span class="diff-badge expert">挑戰</span>
+      </div>
+      <div id="level-grid" class="level-grid"></div>
+    </section>
+
+    <!-- 遊戲畫面 -->
+    <section id="game-screen" class="screen">
+      <header class="topbar game-topbar">
+        <button class="btn back" data-back="levels">← 關卡</button>
+        <div class="level-info">
+          <span id="level-name" class="level-name">第 1 關</span>
+          <span id="level-diff" class="diff-badge easy">簡單</span>
+        </div>
+        <div class="stats">
+          <span>步數 <b id="stat-moves">0</b></span>
+          <span>推動 <b id="stat-pushes">0</b></span>
+        </div>
+      </header>
+
+      <div class="board-wrap">
+        <div id="board" class="board" aria-label="倉庫番棋盤" role="grid"></div>
+      </div>
+
+      <div class="controls">
+        <button id="btn-undo" class="btn">↶ 上一步 (Z)</button>
+        <button id="btn-reset" class="btn">↺ 重來 (R)</button>
+        <button id="btn-next" class="btn" disabled>下一關 →</button>
+      </div>
+
+      <!-- 觸控方向鍵 -->
+      <div class="touchpad" aria-hidden="true">
+        <button class="tpad up" data-dir="up">▲</button>
+        <button class="tpad left" data-dir="left">◀</button>
+        <button class="tpad down" data-dir="down">▼</button>
+        <button class="tpad right" data-dir="right">▶</button>
+      </div>
+    </section>
+
+    <!-- 過關彈窗 -->
+    <div id="win-modal" class="modal" hidden>
+      <div class="modal-card">
+        <div class="confetti" aria-hidden="true">🎉✨🎊</div>
+        <h2>恭喜過關！</h2>
+        <p class="win-stats">
+          步數：<b id="win-moves">0</b><br />
+          推動次數：<b id="win-pushes">0</b>
+        </p>
+        <p id="win-best" class="win-best"></p>
+        <div class="modal-actions">
+          <button id="win-retry" class="btn">再玩一次</button>
+          <button id="win-menu" class="btn">關卡選單</button>
+          <button id="win-next" class="btn btn-primary">下一關 →</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="levels.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

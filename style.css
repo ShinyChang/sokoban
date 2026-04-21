@@ -1,0 +1,415 @@
+/* 倉庫番 Sokoban — 友善小學生高年級風格 */
+
+:root {
+  --bg: #fef6e4;
+  --bg-2: #fbe8c6;
+  --ink: #172c66;
+  --muted: #8b8a9c;
+  --card: #ffffff;
+  --primary: #f582ae;
+  --primary-dark: #e96a9a;
+  --accent: #8bd3dd;
+  --accent-dark: #5cb8c4;
+  --success: #6ad09b;
+  --danger: #ef6461;
+  --wall: #3f3b53;
+  --wall-top: #524d6b;
+  --floor: #fff3dc;
+  --floor-line: #f3dfb3;
+  --target: #ffd29d;
+  --target-ring: #ff8c42;
+  --box: #c38454;
+  --box-on: #6ad09b;
+  --shadow: 0 4px 0 rgba(23, 44, 102, 0.12);
+  --radius: 14px;
+  --cell: 44px;
+}
+
+@media (max-width: 600px) {
+  :root { --cell: 32px; }
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, -apple-system, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  background-image: radial-gradient(circle at 10% 10%, var(--bg-2) 0%, transparent 40%),
+                    radial-gradient(circle at 90% 80%, #e9f5f7 0%, transparent 45%);
+  min-height: 100vh;
+  overscroll-behavior: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#app {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 20px 16px 120px;
+}
+
+.screen { display: none; }
+.screen.active { display: block; animation: fadeIn 0.25s ease; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* === 主選單 === */
+.title-block {
+  text-align: center;
+  padding: 48px 0 32px;
+}
+.title {
+  font-size: clamp(42px, 8vw, 72px);
+  margin: 0;
+  letter-spacing: 2px;
+  color: var(--ink);
+  text-shadow: 0 3px 0 var(--primary);
+}
+.subtitle {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 18px;
+}
+.menu-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+/* === 按鈕 === */
+.btn {
+  appearance: none;
+  border: 2px solid var(--ink);
+  background: var(--card);
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 700;
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform 0.05s ease, box-shadow 0.05s ease, background 0.15s ease;
+  font-family: inherit;
+}
+.btn:hover { background: #fffaf0; }
+.btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 rgba(23, 44, 102, 0.12);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: var(--shadow);
+}
+.btn.big { font-size: 20px; padding: 16px 22px; }
+.btn.small { font-size: 13px; padding: 6px 10px; }
+.btn-primary { background: var(--primary); color: #fff; border-color: var(--primary-dark); }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn.danger { background: #ffe6e5; border-color: var(--danger); color: var(--danger); }
+.btn.danger:hover { background: #ffd3d1; }
+.btn.back { background: transparent; box-shadow: none; border-color: transparent; color: var(--ink); font-weight: 700; }
+.btn.back:hover { background: rgba(23, 44, 102, 0.06); }
+
+/* === 頂部列 === */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0 16px;
+  flex-wrap: wrap;
+}
+.topbar h2 {
+  margin: 0;
+  font-size: 22px;
+  flex: 1;
+  text-align: center;
+}
+.topbar .spacer { width: 60px; }
+.game-topbar .level-info {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+.level-name { font-size: 20px; font-weight: 800; }
+.game-topbar .stats {
+  display: flex;
+  gap: 14px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.stats b { color: var(--ink); font-size: 16px; }
+
+/* === 玩法說明 === */
+.howto {
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  line-height: 1.7;
+}
+.howto p { margin: 0 0 12px; }
+.rules { padding-left: 24px; margin: 0 0 20px; }
+.rules li { margin-bottom: 6px; }
+kbd {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 2px solid var(--ink);
+  border-bottom-width: 3px;
+  border-radius: 6px;
+  background: #fff;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 13px;
+}
+.legend { display: inline-block; padding: 0 4px; }
+.legend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.legend-grid > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+.cell-demo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  font-size: 22px;
+}
+.cell-demo.wall { background: var(--wall); border: 2px solid var(--wall-top); }
+.cell-demo.floor { background: var(--floor); border: 2px dashed var(--floor-line); }
+
+/* === 關卡選擇 === */
+.difficulty-legend {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: var(--muted);
+  flex-wrap: wrap;
+}
+.diff-badge {
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 2px solid transparent;
+}
+.diff-badge.easy { background: #e5f6ee; color: #2b8a5a; border-color: #a9dfc2; }
+.diff-badge.medium { background: #fff4d6; color: #a36f00; border-color: #f4d478; }
+.diff-badge.hard { background: #ffe2d6; color: #b0460e; border-color: #ffaa82; }
+.diff-badge.expert { background: #e6dcff; color: #5a3ab8; border-color: #b9a4f0; }
+
+.level-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(82px, 1fr));
+  gap: 10px;
+}
+.level-tile {
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  padding: 10px 6px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform 0.05s ease;
+  font-family: inherit;
+  color: inherit;
+}
+.level-tile:hover { background: #fffaf0; }
+.level-tile:active { transform: translateY(2px); }
+.level-tile .num { font-size: 22px; font-weight: 800; }
+.level-tile .status { font-size: 14px; height: 18px; }
+.level-tile.done { background: #e5f6ee; border-color: #6ad09b; }
+.level-tile.done .status { color: var(--success); }
+.level-tile .best {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* === 棋盤 === */
+.board-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0 20px;
+  overflow: auto;
+  padding: 4px;
+}
+.board {
+  display: grid;
+  gap: 0;
+  background: var(--card);
+  border: 3px solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 6px;
+}
+.cell {
+  width: var(--cell);
+  height: var(--cell);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(var(--cell) * 0.65);
+  position: relative;
+}
+.cell.wall {
+  background: var(--wall);
+  background-image: linear-gradient(180deg, var(--wall-top) 0%, var(--wall) 70%);
+  border-radius: 6px;
+  box-shadow: inset 0 -4px 0 rgba(0,0,0,0.18), inset 0 3px 0 rgba(255,255,255,0.08);
+}
+.cell.floor {
+  background: var(--floor);
+  background-image:
+    linear-gradient(45deg, var(--floor-line) 25%, transparent 25%, transparent 75%, var(--floor-line) 75%),
+    linear-gradient(45deg, var(--floor-line) 25%, transparent 25%, transparent 75%, var(--floor-line) 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+  opacity: 0.95;
+}
+.cell.target::before {
+  content: "";
+  position: absolute;
+  inset: 22%;
+  background: var(--target);
+  border: 3px dashed var(--target-ring);
+  border-radius: 50%;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+.piece {
+  position: relative;
+  z-index: 2;
+  font-size: calc(var(--cell) * 0.75);
+  line-height: 1;
+  filter: drop-shadow(0 2px 1px rgba(0,0,0,0.18));
+  transition: transform 0.08s linear;
+}
+.piece.box-on { filter: drop-shadow(0 0 6px rgba(106, 208, 155, 0.9)); }
+.piece.player { transition: transform 0.05s linear; }
+
+/* === 控制按鈕 === */
+.controls {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+/* === 觸控方向鍵 === */
+.touchpad {
+  display: none;
+  grid-template-columns: repeat(3, 60px);
+  grid-template-rows: repeat(3, 60px);
+  gap: 6px;
+  justify-content: center;
+  margin: 0 auto;
+}
+.tpad {
+  appearance: none;
+  border: 2px solid var(--ink);
+  background: var(--card);
+  font-size: 22px;
+  font-weight: 700;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  color: var(--ink);
+}
+.tpad:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.1); }
+.tpad.up    { grid-column: 2; grid-row: 1; }
+.tpad.left  { grid-column: 1; grid-row: 2; }
+.tpad.down  { grid-column: 2; grid-row: 3; }
+.tpad.right { grid-column: 3; grid-row: 2; }
+
+@media (hover: none) and (pointer: coarse) {
+  .touchpad { display: grid; }
+}
+
+/* === 過關彈窗 === */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 44, 102, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 100;
+  animation: fadeIn 0.2s ease;
+}
+.modal[hidden] { display: none; }
+.modal-card {
+  background: var(--card);
+  border: 3px solid var(--ink);
+  border-radius: 20px;
+  padding: 28px 24px;
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 8px 0 rgba(23, 44, 102, 0.2);
+  animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes popIn {
+  from { transform: scale(0.5); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.confetti {
+  font-size: 56px;
+  margin-bottom: 8px;
+  animation: bounce 0.8s ease infinite alternate;
+}
+@keyframes bounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(-8px); }
+}
+.modal-card h2 { margin: 0 0 12px; font-size: 28px; color: var(--primary-dark); }
+.win-stats { line-height: 1.8; margin: 12px 0; }
+.win-best { color: var(--success); font-weight: 700; font-style: italic; min-height: 22px; margin: 8px 0 16px; }
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+/* === footer === */
+.foot {
+  text-align: center;
+  margin-top: 40px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.foot a { color: var(--muted); }
+
+/* 防止被方向鍵捲動頁面 */
+body.playing { overflow: hidden; }
