@@ -243,6 +243,8 @@ kbd {
 .level-tile .status { font-size: 14px; height: 18px; }
 .level-tile.done { background: #e5f6ee; border-color: #6ad09b; }
 .level-tile.done .status { color: var(--success); }
+.level-tile.perfect { background: linear-gradient(135deg, #fff4d6 0%, #ffe2d6 100%); border-color: var(--target-ring); }
+.level-tile.perfect .status { color: var(--target-ring); }
 .level-tile .best {
   font-size: 10px;
   color: var(--muted);

@@ -300,13 +300,23 @@
   function updateStats() {
     document.getElementById("stat-moves").textContent = state.moves;
     document.getElementById("stat-pushes").textContent = state.pushes;
+    const opt = LEVELS[state.levelIdx].optimalPushes;
+    const optEl = document.getElementById("stat-optimal");
+    if (opt != null) {
+      optEl.textContent = opt;
+      optEl.style.color = state.pushes === opt ? "var(--success)" :
+                          state.pushes > opt ? "var(--danger)" : "";
+    } else {
+      optEl.textContent = "–";
+    }
   }
 
   function updateHeader() {
-    document.getElementById("level-name").textContent = state.level.name;
+    const def = LEVELS[state.levelIdx];
+    document.getElementById("level-name").textContent = def.name;
     const dEl = document.getElementById("level-diff");
-    dEl.textContent = DIFFICULTY_TEXT[state.level.difficulty];
-    dEl.className = "diff-badge " + state.level.difficulty;
+    dEl.textContent = DIFFICULTY_TEXT[def.difficulty];
+    dEl.className = "diff-badge " + def.difficulty;
   }
 
   // ---------- 畫面切換 ----------
@@ -324,12 +334,15 @@
       const btn = document.createElement("button");
       btn.className = "level-tile " + lv.difficulty;
       const done = progress["level_" + idx]?.completed;
+      const perfect = done && lv.optimalPushes != null && progress["level_" + idx].bestPushes === lv.optimalPushes;
       if (done) btn.classList.add("done");
+      if (perfect) btn.classList.add("perfect");
       btn.innerHTML = `
         <div class="num">${idx + 1}</div>
-        <div class="status">${done ? "⭐" : ""}</div>
+        <div class="status">${perfect ? "✨" : done ? "⭐" : ""}</div>
         <div class="diff-badge ${lv.difficulty}" style="display:inline-block;margin-top:4px;">${DIFFICULTY_TEXT[lv.difficulty]}</div>
-        ${done ? `<div class="best">最佳 ${progress["level_" + idx].bestMoves} 步</div>` : ""}
+        <div class="best">${lv.optimalPushes != null ? "最少 " + lv.optimalPushes + " 推" : ""}</div>
+        ${done ? `<div class="best">你的最佳 ${progress["level_" + idx].bestPushes} 推</div>` : ""}
       `;
       btn.addEventListener("click", () => {
         loadLevel(idx);
@@ -343,10 +356,17 @@
   function showWinModal(isNewRecord, best) {
     document.getElementById("win-moves").textContent = state.moves;
     document.getElementById("win-pushes").textContent = state.pushes;
+    const opt = LEVELS[state.levelIdx].optimalPushes;
     const bestEl = document.getElementById("win-best");
-    bestEl.textContent = isNewRecord
-      ? "🏆 新紀錄！"
-      : `本關最佳：${best.bestMoves} 步 / ${best.bestPushes} 推`;
+    const perfect = opt != null && state.pushes === opt;
+    if (perfect) {
+      bestEl.textContent = "✨ 完美解答！達成最少推動次數 " + opt + " 推";
+    } else if (isNewRecord) {
+      bestEl.textContent = "🏆 新紀錄！" + (opt != null ? `（最佳可能：${opt} 推）` : "");
+    } else {
+      bestEl.textContent = `本關最佳：${best.bestMoves} 步 / ${best.bestPushes} 推` +
+        (opt != null ? ` ｜最少 ${opt} 推` : "");
+    }
     document.getElementById("win-modal").hidden = false;
     const nextBtn = document.getElementById("win-next");
     nextBtn.disabled = state.levelIdx >= LEVELS.length - 1;
