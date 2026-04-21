@@ -324,34 +324,36 @@ kbd {
   margin-bottom: 20px;
 }
 
-/* === 觸控方向鍵 === */
+/* === 觸控方向鍵（永遠顯示，平板、手機、沒鍵盤都能玩）=== */
 .touchpad {
-  display: none;
-  grid-template-columns: repeat(3, 60px);
-  grid-template-rows: repeat(3, 60px);
-  gap: 6px;
+  display: grid;
+  grid-template-columns: repeat(3, 64px);
+  grid-template-rows: repeat(3, 64px);
+  gap: 8px;
   justify-content: center;
-  margin: 0 auto;
+  margin: 8px auto 0;
 }
 .tpad {
   appearance: none;
   border: 2px solid var(--ink);
   background: var(--card);
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 700;
-  border-radius: 12px;
+  border-radius: 14px;
   box-shadow: var(--shadow);
   cursor: pointer;
   color: var(--ink);
+  touch-action: manipulation;
 }
-.tpad:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.1); }
+.tpad:hover { background: #fffaf0; }
+.tpad:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.1); background: var(--accent); }
 .tpad.up    { grid-column: 2; grid-row: 1; }
 .tpad.left  { grid-column: 1; grid-row: 2; }
 .tpad.down  { grid-column: 2; grid-row: 3; }
 .tpad.right { grid-column: 3; grid-row: 2; }
-
-@media (hover: none) and (pointer: coarse) {
-  .touchpad { display: grid; }
+@media (max-width: 600px) {
+  .touchpad { grid-template-columns: repeat(3, 56px); grid-template-rows: repeat(3, 56px); }
+  .tpad { font-size: 22px; }
 }
 
 /* === 過關彈窗 === */

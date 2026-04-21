@@ -374,15 +374,18 @@
       else if (k === "r" || k === "R") { reset(); e.preventDefault(); }
     });
 
-    // 觸控方向鍵
+    // 觸控方向鍵（用 pointerdown 立即回饋；preventDefault 避免雙重觸發）
     document.querySelectorAll(".tpad").forEach((b) => {
-      b.addEventListener("click", () => {
+      const handler = (e) => {
+        e.preventDefault();
+        b.blur();
         const d = b.dataset.dir;
         if (d === "up") tryMove(-1, 0);
         else if (d === "down") tryMove(1, 0);
         else if (d === "left") tryMove(0, -1);
         else if (d === "right") tryMove(0, 1);
-      });
+      };
+      b.addEventListener("pointerdown", handler);
     });
 
     // 畫面切換 / 主選單
