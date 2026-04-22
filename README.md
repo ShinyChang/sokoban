@@ -69,4 +69,6 @@ sokoban/
 
 ## License
 
-MIT
+- **程式碼**：MIT
+- **關卡資料**：David W. Skinner — Microban I & II（public domain）
+- **「倉庫番」/「Sokoban」** 是 Thinking Rabbit (1982) 的商標，本專案為非商業同人作品
