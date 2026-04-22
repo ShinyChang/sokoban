@@ -1,10 +1,51 @@
-// 倉庫番關卡集（Microban 公有題庫，依最少推動次數排序）
-// 資料來源：David W. Skinner — Microban I & II (public domain)
-// 關卡已過 BFS solver 驗證，每題附最佳推動次數
+// 倉庫番關卡集
+// 前 3 關：手刻入門教學
+// 其餘：David W. Skinner — Microban I & II (public domain)，依最少推動次數排序
+// 全部關卡已過 BFS solver 驗證
 
 const LEVELS = [
   {
-    name: "第 1 關 · 最少 5 推",
+    name: "第 1 關 · 試試看（1 推）",
+    difficulty: "easy",
+    optimalPushes: 1,
+    source: "Tutorial #1",
+    map: [
+      "#####",
+      "#   #",
+      "#@$.#",
+      "#   #",
+      "#####",
+    ],
+  },
+  {
+    name: "第 2 關 · 多推一格（2 推）",
+    difficulty: "easy",
+    optimalPushes: 2,
+    source: "Tutorial #2",
+    map: [
+      "######",
+      "#    #",
+      "#@$ .#",
+      "#    #",
+      "######",
+    ],
+  },
+  {
+    name: "第 3 關 · 連推三下（3 推）",
+    difficulty: "easy",
+    optimalPushes: 3,
+    source: "Tutorial #3",
+    map: [
+      "#####",
+      "#.  #",
+      "#   #",
+      "#$  #",
+      "#@  #",
+      "#####",
+    ],
+  },
+  {
+    name: "第 4 關 · 最少 5 推",
     difficulty: "easy",
     optimalPushes: 5,
     source: "Microban I #21",
@@ -18,7 +59,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 2 關 · 最少 6 推",
+    name: "第 5 關 · 最少 6 推",
     difficulty: "easy",
     optimalPushes: 6,
     source: "Microban I #5",
@@ -33,7 +74,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 3 關 · 最少 6 推",
+    name: "第 6 關 · 最少 6 推",
     difficulty: "easy",
     optimalPushes: 6,
     source: "Microban I #56",
@@ -47,7 +88,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 4 關 · 最少 6 推",
+    name: "第 7 關 · 最少 6 推",
     difficulty: "easy",
     optimalPushes: 6,
     source: "Microban II #25",
@@ -63,7 +104,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 5 關 · 最少 7 推",
+    name: "第 8 關 · 最少 7 推",
     difficulty: "easy",
     optimalPushes: 7,
     source: "Microban I #40",
@@ -77,7 +118,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 6 關 · 最少 8 推",
+    name: "第 9 關 · 最少 8 推",
     difficulty: "easy",
     optimalPushes: 8,
     source: "Microban I #1",
@@ -92,7 +133,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 7 關 · 最少 8 推",
+    name: "第 10 關 · 最少 8 推",
     difficulty: "easy",
     optimalPushes: 8,
     source: "Microban I #38",
@@ -107,7 +148,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 8 關 · 最少 8 推",
+    name: "第 11 關 · 最少 8 推",
     difficulty: "easy",
     optimalPushes: 8,
     source: "Microban I #52",
@@ -123,7 +164,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 9 關 · 最少 9 推",
+    name: "第 12 關 · 最少 9 推",
     difficulty: "medium",
     optimalPushes: 9,
     source: "Microban I #17",
@@ -138,7 +179,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 10 關 · 最少 9 推",
+    name: "第 13 關 · 最少 9 推",
     difficulty: "medium",
     optimalPushes: 9,
     source: "Microban II #14",
@@ -153,7 +194,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 11 關 · 最少 10 推",
+    name: "第 14 關 · 最少 10 推",
     difficulty: "medium",
     optimalPushes: 10,
     source: "Microban I #23",
@@ -168,7 +209,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 12 關 · 最少 10 推",
+    name: "第 15 關 · 最少 10 推",
     difficulty: "medium",
     optimalPushes: 10,
     source: "Microban II #17",
@@ -184,7 +225,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 13 關 · 最少 11 推",
+    name: "第 16 關 · 最少 11 推",
     difficulty: "medium",
     optimalPushes: 11,
     source: "Microban I #45",
@@ -199,7 +240,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 14 關 · 最少 12 推",
+    name: "第 17 關 · 最少 12 推",
     difficulty: "medium",
     optimalPushes: 12,
     source: "Microban I #15",
@@ -214,7 +255,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 15 關 · 最少 13 推",
+    name: "第 18 關 · 最少 13 推",
     difficulty: "medium",
     optimalPushes: 13,
     source: "Microban I #3",
@@ -228,7 +269,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 16 關 · 最少 14 推",
+    name: "第 19 關 · 最少 14 推",
     difficulty: "medium",
     optimalPushes: 14,
     source: "Microban I #48",
@@ -244,7 +285,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 17 關 · 最少 14 推",
+    name: "第 20 關 · 最少 14 推",
     difficulty: "medium",
     optimalPushes: 14,
     source: "Microban II #20",
@@ -260,7 +301,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 18 關 · 最少 14 推",
+    name: "第 21 關 · 最少 14 推",
     difficulty: "medium",
     optimalPushes: 14,
     source: "Microban II #128",
@@ -277,7 +318,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 19 關 · 最少 15 推",
+    name: "第 22 關 · 最少 15 推",
     difficulty: "medium",
     optimalPushes: 15,
     source: "Microban II #64",
@@ -292,7 +333,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 20 關 · 最少 16 推",
+    name: "第 23 關 · 最少 16 推",
     difficulty: "medium",
     optimalPushes: 16,
     source: "Microban II #1",
@@ -308,7 +349,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 21 關 · 最少 16 推",
+    name: "第 24 關 · 最少 16 推",
     difficulty: "medium",
     optimalPushes: 16,
     source: "Microban II #98",
@@ -326,7 +367,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 22 關 · 最少 18 推",
+    name: "第 25 關 · 最少 18 推",
     difficulty: "medium",
     optimalPushes: 18,
     source: "Microban I #79",
@@ -340,7 +381,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 23 關 · 最少 19 推",
+    name: "第 26 關 · 最少 19 推",
     difficulty: "hard",
     optimalPushes: 19,
     source: "Microban I #128",
@@ -356,7 +397,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 24 關 · 最少 20 推",
+    name: "第 27 關 · 最少 20 推",
     difficulty: "hard",
     optimalPushes: 20,
     source: "Microban I #142",
@@ -373,7 +414,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 25 關 · 最少 21 推",
+    name: "第 28 關 · 最少 21 推",
     difficulty: "hard",
     optimalPushes: 21,
     source: "Microban I #13",
@@ -390,7 +431,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 26 關 · 最少 22 推",
+    name: "第 29 關 · 最少 22 推",
     difficulty: "hard",
     optimalPushes: 22,
     source: "Microban I #29",
@@ -407,7 +448,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 27 關 · 最少 22 推",
+    name: "第 30 關 · 最少 22 推",
     difficulty: "hard",
     optimalPushes: 22,
     source: "Microban II #48",
@@ -422,7 +463,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 28 關 · 最少 22 推",
+    name: "第 31 關 · 最少 22 推",
     difficulty: "hard",
     optimalPushes: 22,
     source: "Microban II #89",
@@ -439,7 +480,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 29 關 · 最少 23 推",
+    name: "第 32 關 · 最少 23 推",
     difficulty: "hard",
     optimalPushes: 23,
     source: "Microban II #42",
@@ -455,7 +496,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 30 關 · 最少 24 推",
+    name: "第 33 關 · 最少 24 推",
     difficulty: "hard",
     optimalPushes: 24,
     source: "Microban II #32",
@@ -473,7 +514,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 31 關 · 最少 26 推",
+    name: "第 34 關 · 最少 26 推",
     difficulty: "hard",
     optimalPushes: 26,
     source: "Microban I #70",
@@ -491,7 +532,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 32 關 · 最少 27 推",
+    name: "第 35 關 · 最少 27 推",
     difficulty: "hard",
     optimalPushes: 27,
     source: "Microban II #27",
@@ -509,7 +550,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 33 關 · 最少 28 推",
+    name: "第 36 關 · 最少 28 推",
     difficulty: "hard",
     optimalPushes: 28,
     source: "Microban II #106",
@@ -527,7 +568,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 34 關 · 最少 29 推",
+    name: "第 37 關 · 最少 29 推",
     difficulty: "hard",
     optimalPushes: 29,
     source: "Microban II #70",
@@ -543,7 +584,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 35 關 · 最少 30 推",
+    name: "第 38 關 · 最少 30 推",
     difficulty: "hard",
     optimalPushes: 30,
     source: "Microban II #22",
@@ -560,7 +601,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 36 關 · 最少 31 推",
+    name: "第 39 關 · 最少 31 推",
     difficulty: "hard",
     optimalPushes: 31,
     source: "Microban II #80",
@@ -577,7 +618,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 37 關 · 最少 32 推",
+    name: "第 40 關 · 最少 32 推",
     difficulty: "hard",
     optimalPushes: 32,
     source: "Microban II #21",
@@ -596,7 +637,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 38 關 · 最少 34 推",
+    name: "第 41 關 · 最少 34 推",
     difficulty: "hard",
     optimalPushes: 34,
     source: "Microban II #34",
@@ -615,7 +656,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 39 關 · 最少 36 推",
+    name: "第 42 關 · 最少 36 推",
     difficulty: "expert",
     optimalPushes: 36,
     source: "Microban I #130",
@@ -630,7 +671,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 40 關 · 最少 37 推",
+    name: "第 43 關 · 最少 37 推",
     difficulty: "expert",
     optimalPushes: 37,
     source: "Microban I #69",
@@ -646,7 +687,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 41 關 · 最少 39 推",
+    name: "第 44 關 · 最少 39 推",
     difficulty: "expert",
     optimalPushes: 39,
     source: "Microban I #16",
@@ -662,7 +703,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 42 關 · 最少 40 推",
+    name: "第 45 關 · 最少 40 推",
     difficulty: "expert",
     optimalPushes: 40,
     source: "Microban II #45",
@@ -677,7 +718,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 43 關 · 最少 44 推",
+    name: "第 46 關 · 最少 44 推",
     difficulty: "expert",
     optimalPushes: 44,
     source: "Microban I #60",
@@ -695,7 +736,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 44 關 · 最少 46 推",
+    name: "第 47 關 · 最少 46 推",
     difficulty: "expert",
     optimalPushes: 46,
     source: "Microban II #87",
@@ -716,7 +757,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 45 關 · 最少 47 推",
+    name: "第 48 關 · 最少 47 推",
     difficulty: "expert",
     optimalPushes: 47,
     source: "Microban II #100",
@@ -737,7 +778,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 46 關 · 最少 50 推",
+    name: "第 49 關 · 最少 50 推",
     difficulty: "expert",
     optimalPushes: 50,
     source: "Microban I #106",
@@ -754,7 +795,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 47 關 · 最少 51 推",
+    name: "第 50 關 · 最少 51 推",
     difficulty: "expert",
     optimalPushes: 51,
     source: "Microban I #85",
@@ -773,7 +814,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 48 關 · 最少 53 推",
+    name: "第 51 關 · 最少 53 推",
     difficulty: "expert",
     optimalPushes: 53,
     source: "Microban I #87",
@@ -791,7 +832,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 49 關 · 最少 60 推",
+    name: "第 52 關 · 最少 60 推",
     difficulty: "expert",
     optimalPushes: 60,
     source: "Microban II #129",
@@ -810,7 +851,7 @@ const LEVELS = [
     ],
   },
   {
-    name: "第 50 關 · 最少 68 推",
+    name: "第 53 關 · 最少 68 推",
     difficulty: "expert",
     optimalPushes: 68,
     source: "Microban I #84",
