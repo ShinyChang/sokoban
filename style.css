@@ -242,9 +242,45 @@ kbd {
 .level-tile .num { font-size: 22px; font-weight: 800; }
 .level-tile .status { font-size: 14px; height: 18px; }
 .level-tile.done { background: #e5f6ee; border-color: #6ad09b; }
-.level-tile.done .status { color: var(--success); }
 .level-tile.perfect { background: linear-gradient(135deg, #fff4d6 0%, #ffe2d6 100%); border-color: var(--target-ring); }
-.level-tile.perfect .status { color: var(--target-ring); }
+
+/* 星等：通用樣式 */
+.stars {
+  font-size: 14px;
+  letter-spacing: 1px;
+  height: 18px;
+  color: #d0c8bd;
+}
+.stars.stars-1 { color: #b89968; }
+.stars.stars-2 { color: #e8a74a; }
+.stars.stars-3 { color: var(--target-ring); text-shadow: 0 0 4px rgba(255,140,66,0.4); }
+
+/* 遊戲頂部的即時星等 */
+.live-stars {
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: #d0c8bd;
+}
+.live-stars.stars-1 { color: #b89968; }
+.live-stars.stars-2 { color: #e8a74a; }
+.live-stars.stars-3 { color: var(--target-ring); text-shadow: 0 0 4px rgba(255,140,66,0.5); }
+
+/* 過關彈窗大星星 */
+.win-stars {
+  font-size: 48px;
+  letter-spacing: 6px;
+  margin: 8px 0 4px;
+  color: #d0c8bd;
+  animation: starPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.win-stars.stars-1 { color: #b89968; }
+.win-stars.stars-2 { color: #e8a74a; }
+.win-stars.stars-3 { color: var(--target-ring); text-shadow: 0 0 12px rgba(255,140,66,0.6); }
+@keyframes starPop {
+  from { transform: scale(0.3); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.win-history { color: var(--muted); font-size: 13px; margin: 4px 0 12px; }
 .level-tile .best {
   font-size: 10px;
   color: var(--muted);

@@ -11,6 +11,20 @@
     expert: "挑戰",
   };
 
+  // 星等：3★ = 最佳解，2★ = 最佳 +50%（至少 +2），1★ = 解開
+  function twoStarThreshold(optimal) {
+    return optimal + Math.max(2, Math.floor(optimal * 0.5));
+  }
+  function starsFor(pushes, optimal) {
+    if (optimal == null) return pushes > 0 ? 1 : 0;
+    if (pushes === optimal) return 3;
+    if (pushes <= twoStarThreshold(optimal)) return 2;
+    return 1;
+  }
+  function renderStars(n) {
+    return "★".repeat(n) + "☆".repeat(3 - n);
+  }
+
   // ---------- 進度儲存 ----------
   function loadProgress() {
     try {
@@ -309,6 +323,13 @@
     } else {
       optEl.textContent = "–";
     }
+    // 當前星等預測（解開時會拿到的星星）
+    const liveEl = document.getElementById("stat-stars");
+    if (liveEl) {
+      const s = starsFor(state.pushes, opt);
+      liveEl.textContent = renderStars(s);
+      liveEl.className = "live-stars stars-" + s;
+    }
   }
 
   function updateHeader() {
@@ -333,16 +354,17 @@
     LEVELS.forEach((lv, idx) => {
       const btn = document.createElement("button");
       btn.className = "level-tile " + lv.difficulty;
-      const done = progress["level_" + idx]?.completed;
-      const perfect = done && lv.optimalPushes != null && progress["level_" + idx].bestPushes === lv.optimalPushes;
+      const rec = progress["level_" + idx];
+      const done = !!rec?.completed;
+      const stars = done ? starsFor(rec.bestPushes, lv.optimalPushes) : 0;
       if (done) btn.classList.add("done");
-      if (perfect) btn.classList.add("perfect");
+      if (stars === 3) btn.classList.add("perfect");
       btn.innerHTML = `
         <div class="num">${idx + 1}</div>
-        <div class="status">${perfect ? "✨" : done ? "⭐" : ""}</div>
+        <div class="stars stars-${stars}">${done ? renderStars(stars) : "☆☆☆"}</div>
         <div class="diff-badge ${lv.difficulty}" style="display:inline-block;margin-top:4px;">${DIFFICULTY_TEXT[lv.difficulty]}</div>
         <div class="best">${lv.optimalPushes != null ? "最少 " + lv.optimalPushes + " 推" : ""}</div>
-        ${done ? `<div class="best">你的最佳 ${progress["level_" + idx].bestPushes} 推</div>` : ""}
+        ${done ? `<div class="best">你的最佳 ${rec.bestPushes} 推</div>` : ""}
       `;
       btn.addEventListener("click", () => {
         loadLevel(idx);
@@ -357,15 +379,24 @@
     document.getElementById("win-moves").textContent = state.moves;
     document.getElementById("win-pushes").textContent = state.pushes;
     const opt = LEVELS[state.levelIdx].optimalPushes;
+    const stars = starsFor(state.pushes, opt);
+    const starEl = document.getElementById("win-stars");
+    starEl.innerHTML = renderStars(stars);
+    starEl.className = "win-stars stars-" + stars;
     const bestEl = document.getElementById("win-best");
-    const perfect = opt != null && state.pushes === opt;
-    if (perfect) {
-      bestEl.textContent = "✨ 完美解答！達成最少推動次數 " + opt + " 推";
-    } else if (isNewRecord) {
-      bestEl.textContent = "🏆 新紀錄！" + (opt != null ? `（最佳可能：${opt} 推）` : "");
+    if (stars === 3) {
+      bestEl.textContent = "完美解答！達成最少推動次數 " + opt + " 推 ✨";
+    } else if (stars === 2) {
+      bestEl.textContent = `接近最佳！再少 ${state.pushes - opt} 推就是三星（最少 ${opt} 推）`;
+    } else if (opt != null) {
+      bestEl.textContent = `過關！最佳可能 ${opt} 推，再挑戰看看 🎯`;
     } else {
-      bestEl.textContent = `本關最佳：${best.bestMoves} 步 / ${best.bestPushes} 推` +
-        (opt != null ? ` ｜最少 ${opt} 推` : "");
+      bestEl.textContent = "過關！";
+    }
+    const histEl = document.getElementById("win-history");
+    if (histEl) {
+      histEl.textContent = isNewRecord ? "🏆 新紀錄！" :
+        `本關最佳：${best.bestMoves} 步 / ${best.bestPushes} 推`;
     }
     document.getElementById("win-modal").hidden = false;
     const nextBtn = document.getElementById("win-next");

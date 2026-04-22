@@ -53,6 +53,12 @@
           <div><span class="cell-demo box-on">✅</span>已就位</div>
           <div><span class="cell-demo player-demo">🧑</span>玩家</div>
         </div>
+        <h3 style="margin-top:20px;">星等評價</h3>
+        <ul class="rules">
+          <li><span class="stars stars-3" style="font-size:16px;">★★★</span> — 用最少推動次數完成（完美解）</li>
+          <li><span class="stars stars-2" style="font-size:16px;">★★☆</span> — 接近最佳（多出來的推動次數 ≤ 最佳 × 50%）</li>
+          <li><span class="stars stars-1" style="font-size:16px;">★☆☆</span> — 解開關卡</li>
+        </ul>
       </div>
     </section>
 
@@ -84,6 +90,7 @@
         <div class="stats">
           <span>步數 <b id="stat-moves">0</b></span>
           <span>推動 <b id="stat-pushes">0</b> / <b id="stat-optimal">–</b></span>
+          <span id="stat-stars" class="live-stars stars-3">★★★</span>
         </div>
       </header>
 
@@ -111,11 +118,13 @@
       <div class="modal-card">
         <div class="confetti" aria-hidden="true">🎉✨🎊</div>
         <h2>恭喜過關！</h2>
+        <div id="win-stars" class="win-stars stars-3">★★★</div>
         <p class="win-stats">
           步數：<b id="win-moves">0</b><br />
           推動次數：<b id="win-pushes">0</b>
         </p>
         <p id="win-best" class="win-best"></p>
+        <p id="win-history" class="win-history"></p>
         <div class="modal-actions">
           <button id="win-retry" class="btn">再玩一次</button>
           <button id="win-menu" class="btn">關卡選單</button>
